@@ -3,70 +3,150 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AWED-FiNER: Fine-grained NER across 36 Languages</title>
-    <link rel="stylesheet" href="style.css">
+    <title>AWED-FiNER | Fine-grained NER across 36 Languages</title>
+    
     <script type="module" src="https://cdn.jsdelivr.net/npm/@gradio/client@0.1.4/dist/index.min.js"></script>
+
+    <style>
+        :root { --primary: #00568b; --bg: #f4f7f9; --text: #333; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; line-height: 1.6; background: var(--bg); color: var(--text); margin: 0; padding: 0; }
+        .header { background: var(--primary); color: white; padding: 3rem 1rem; text-align: center; }
+        .container { max-width: 900px; margin: -2rem auto 2rem; padding: 0 1rem; }
+        .card { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+        
+        .input-group { margin-bottom: 1.5rem; }
+        label { display: block; font-weight: bold; margin-bottom: 0.5rem; color: var(--primary); }
+        select, textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 1rem; box-sizing: border-box; }
+        
+        button { background: var(--primary); color: white; border: none; padding: 1rem 2rem; font-size: 1.1rem; border-radius: 6px; cursor: pointer; width: 100%; font-weight: bold; transition: 0.2s; }
+        button:hover { background: #004470; transform: translateY(-1px); }
+        
+        .output-box { margin-top: 1.5rem; padding: 1.5rem; background: #f8f9fa; border-left: 5px solid var(--primary); border-radius: 4px; min-height: 80px; font-family: monospace; white-space: pre-wrap; overflow-x: auto; }
+        
+        .info-section { line-height: 1.8; }
+        .links-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem; }
+        .btn-outline { display: block; text-align: center; padding: 10px; border: 2px solid var(--primary); color: var(--primary); text-decoration: none; border-radius: 6px; font-weight: bold; }
+        .btn-outline:hover { background: var(--primary); color: white; }
+        pre { background: #eee; padding: 1rem; border-radius: 6px; overflow-x: auto; font-size: 0.9rem; }
+    </style>
 </head>
 <body>
-    <header>
-        <h1>🌍 AWED-FiNER</h1>
-        <p>Agents, Web applications, and Expert Detectors for Fine-grained NER</p>
-    </header>
 
-    <main class="container">
-        <section class="demo-card">
-            <h2>Live Demo</h2>
-            <div class="input-group">
-                <label for="lang-select">1. Select Language</label>
-                <select id="lang-select"></select>
-            </div>
+<div class="header">
+    <h1>🌍 AWED-FiNER</h1>
+    <p>Fine-grained Named Entity Recognition for 36 Languages & 6.6 Billion Speakers</p>
+</div>
 
-            <div class="input-group">
-                <label for="text-input">2. Input Text</label>
-                <textarea id="text-input" rows="3"></textarea>
-            </div>
+<div class="container">
+    <div class="card">
+        <div class="input-group">
+            <label for="lang-select">1. Select Language</label>
+            <select id="lang-select">
+                <option value="English">English</option>
+                <option value="Assamese">Assamese</option>
+                <option value="Bengali">Bengali</option>
+                <option value="Bhojpuri">Bhojpuri</option>
+                <option value="Bishnupriya">Bishnupriya</option>
+                <option value="Bodo">Bodo</option>
+                <option value="Hindi">Hindi</option>
+                <option value="Mizo">Mizo</option>
+                <option value="Spanish">Spanish</option>
+                <option value="Chinese">Chinese</option>
+                </select>
+        </div>
 
-            <button id="analyze-btn">Analyze</button>
+        <div class="input-group">
+            <label for="text-input">2. Input Text</label>
+            <textarea id="text-input" rows="4">Jude Bellingham joined Real Madrid in 2023.</textarea>
+        </div>
 
-            <div id="result-container">
-                <label>3. Fine-grained NER Results</label>
-                <div id="output-display" class="output-box">
-                    Results will appear here...
-                </div>
-            </div>
-        </section>
+        <button id="analyze-btn">Analyze Text</button>
 
-        <section class="content">
-            <h2>About the Project</h2>
-            <p>AWED-FiNER is a unified Agentic AI Tool designed to bridge the gap between global high-resource languages and vulnerable linguistic communities...</p>
-            
-            <h3>Core Datasets</h3>
-            <ul>
-                <li><strong>SampurNER:</strong> 22 Indian languages. <a href="https://huggingface.co/datasets/prachuryyaIITG/SampurNER">[Dataset]</a></li>
-                <li><strong>CLASSER:</strong> 5 low-resource Indian languages. <a href="https://huggingface.co/datasets/prachuryyaIITG/CLASSER">[Dataset]</a></li>
-            </ul>
+        <div class="input-group">
+            <label>3. NER Results</label>
+            <div id="output-display" class="output-box">Results will appear here...</div>
+        </div>
+    </div>
 
-            <h3>Project Links</h3>
-            <div class="links-grid">
-                <a href="https://huggingface.co/spaces/prachuryyaIITG/AWED-FiNER" class="btn-link">HuggingFace Space</a>
-                <a href="https://github.com/PrachuryyaKaushik/AWED-FiNER" class="btn-link">Agentic Tool GitHub</a>
-            </div>
-        </section>
+    <div class="card info-section">
+        <h2>About AWED-FiNER</h2>
+        <p>A unified <strong>Agentic AI Tool</strong> designed to bridge the gap between global high-resource languages and vulnerable linguistic communities (UNESCO classified) like Bodo, Manipuri, and Mizo.</p>
+        
+        <h3>Core Datasets</h3>
+        <ul>
+            <li><strong>SampurNER:</strong> 22 Indian languages. <a href="https://huggingface.co/datasets/prachuryyaIITG/SampurNER">Explore</a></li>
+            <li><strong>CLASSER:</strong> 5 low-resource languages. <a href="https://huggingface.co/datasets/prachuryyaIITG/CLASSER">Explore</a></li>
+        </ul>
 
-        <section class="citations">
-            <h3>Citations</h3>
-            <pre><code>@misc{kaushik2026awedfiner,
+        <h3>Resources</h3>
+        <div class="links-grid">
+            <a href="https://huggingface.co/spaces/prachuryyaIITG/AWED-FiNER" class="btn-outline">HuggingFace Space</a>
+            <a href="https://github.com/PrachuryyaKaushik/AWED-FiNER" class="btn-outline">Agentic Tool Repo</a>
+            <a href="https://huggingface.co/prachuryyaIITG" class="btn-outline">Author Profile</a>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>Citations</h3>
+        <pre><code>@misc{kaushik2026awedfiner,
   title = {AWED-FiNER: Agents, Web Applications, and Expert Detectors...},
   author = {Kaushik, Prachuryya and Anand, Ashish},
   year = {2026}
 }</code></pre>
-        </section>
-    </main>
+    </div>
+</div>
 
-    <footer>
-        <p>Developed by Prachuryya Kaushik | <a href="https://huggingface.co/prachuryyaIITG">Hugging Face Profile</a></p>
-    </footer>
+<script type="module">
+    import { Client } from "https://cdn.jsdelivr.net/npm/@gradio/client@0.1.4/dist/index.min.js";
 
-    <script src="script.js" type="module"></script>
+    const examples = {
+        "English": "Jude Bellingham joined Real Madrid in 2023.",
+        "Hindi": "भारत के पूर्वी भाग में स्थित एक राज्य पश्चिमबंग है।",
+        "Chinese": "姚明出生于上海。",
+        "Bodo": "अमिताभ बच्चनआ सासे मुंदांखा फावखुंगुर।",
+        "Assamese": "অমিতাভ বচ্চন এজন বিখ্যাত অভিনেতা।",
+        "Mizo": "Aizawl khaw vawt tak a ni.",
+        "Spanish": "Madrid es la capital de España."
+    };
+
+    const langSelect = document.getElementById('lang-select');
+    const textInput = document.getElementById('text-input');
+    const analyzeBtn = document.getElementById('analyze-btn');
+    const outputDisplay = document.getElementById('output-display');
+
+    // Update text on language change
+    langSelect.addEventListener('change', () => {
+        textInput.value = examples[langSelect.value] || "";
+    });
+
+    // Run Inference
+    async function runInference() {
+        const text = textInput.value;
+        const lang = langSelect.value;
+        
+        if(!text) return;
+        
+        outputDisplay.innerText = "Connecting to Hugging Face Space... (this may take a few seconds)";
+        analyzeBtn.disabled = true;
+        analyzeBtn.innerText = "Processing...";
+
+        try {
+            const app = await Client.connect("prachuryyaIITG/AWED-FiNER");
+            const result = await app.predict("/predict", [text, lang]);
+            
+            // Format results
+            outputDisplay.innerHTML = JSON.stringify(result.data[0], null, 2);
+        } catch (error) {
+            outputDisplay.innerText = "Error: " + error.message;
+            console.error(error);
+        } finally {
+            analyzeBtn.disabled = false;
+            analyzeBtn.innerText = "Analyze Text";
+        }
+    }
+
+    analyzeBtn.addEventListener('click', runInference);
+</script>
+
 </body>
 </html>
