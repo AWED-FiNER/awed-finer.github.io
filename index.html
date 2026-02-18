@@ -78,42 +78,37 @@
         const outputDisplay = document.getElementById('output-display');
         const statusArea = document.getElementById('status-area');
 
-        // 1. Populate Dropdown immediately
-        Object.keys(MODELS).forEach(lang => {
-            const opt = document.createElement('option');
-            opt.value = lang;
-            opt.textContent = lang;
-            langSelect.appendChild(opt);
-        });
-
-        textInput.value = MODELS["English"];
-
-        // 2. Handle Dropdown change
-        langSelect.addEventListener('change', () => {
-            textInput.value = MODELS[langSelect.value] || "";
-        });
-
-        // 3. Inference Logic
         async function runInference() {
             const text = textInput.value;
             const lang = langSelect.value;
             
             analyzeBtn.disabled = true;
-            analyzeBtn.innerText = "Processing...";
-            statusArea.innerText = "Connecting to Hugging Face API...";
+            analyzeBtn.innerText = "🔍 Processing...";
+            statusArea.innerText = "Request sent... waiting for response.";
+            outputDisplay.innerText = "Thinking...";
 
             try {
                 const app = await Client.connect("prachuryyaIITG/AWED-FiNER");
-                
-                // Using array format [text, language] to match your app.py inputs
                 const result = await app.predict("/predict", [text, lang]);
                 
-                outputDisplay.innerText = JSON.stringify(result.data[0], null, 2);
-                statusArea.innerText = "Analysis Complete.";
+                console.log("Raw API Result:", result); // CHECK YOUR CONSOLE FOR THIS
+
+                // Logic to handle the specific structure of your app.py output
+                if (result && result.data && result.data[0]) {
+                    const nerData = result.data[0];
+                    
+                    // If output is the HighlightedText format, it usually looks like:
+                    // { "text": "...", "entities": [{"entity": "...", "start": 0, "end": 5}, ...] }
+                    outputDisplay.innerText = JSON.stringify(nerData, null, 2);
+                    statusArea.innerText = "Analysis Complete.";
+                } else {
+                    statusArea.innerText = "Received empty data from API.";
+                }
+
             } catch (error) {
-                console.error(error);
-                statusArea.innerText = "Error encountered.";
-                outputDisplay.innerText = "Error: " + error.message + "\n\nTip: Ensure your HF Space is 'Public'.";
+                console.error("Inference Error:", error);
+                statusArea.innerText = "Error: " + error.message;
+                outputDisplay.innerText = "Please visit https://huggingface.co/spaces/prachuryyaIITG/AWED-FiNER";
             } finally {
                 analyzeBtn.disabled = false;
                 analyzeBtn.innerText = "Analyze Text";
