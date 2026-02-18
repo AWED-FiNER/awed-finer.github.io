@@ -126,14 +126,20 @@
             
             analyzeBtn.disabled = true;
             analyzeBtn.innerText = "Processing...";
-            statusArea.innerText = "Connecting to Space & Requesting GPU...";
-            outputDisplay.innerText = "Thinking...";
+            statusArea.innerText = "Connecting to API...";
+            outputDisplay.innerText = "Searching for endpoints...";
 
             try {
                 const app = await Client.connect("prachuryyaIITG/AWED-FiNER");
                 
-                // Use .submit() to handle the ZeroGPU queue properly
-                const job = app.submit("/predict", [text, lang]);
+                // We try "predict" first, and if that fails, we try the function name "get_ner_results"
+                let job;
+                try {
+                    job = app.submit("/predict", [text, lang]);
+                } catch (e) {
+                    console.log("Retrying with function name...");
+                    job = app.submit("/get_ner_results", [text, lang]);
+                }
 
                 for await (const message of job) {
                     if (message.type === "status") {
@@ -148,8 +154,9 @@
                 }
             } catch (error) {
                 console.error(error);
-                statusArea.innerText = "Connection failed.";
-                outputDisplay.innerText = "Error: " + error.message;
+                statusArea.innerText = "API Endpoint Error.";
+                outputDisplay.innerText = "Error: " + error.message + 
+                "\n\nPossible Fix: Ensure your app.py has 'api_name=\"predict\"' in the submit_btn.click() function.";
             } finally {
                 analyzeBtn.disabled = false;
                 analyzeBtn.innerText = "Analyze Text";
