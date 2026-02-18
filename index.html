@@ -4,90 +4,58 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AWED-FiNER | Fine-grained NER across 36 Languages</title>
-    
-    <script type="module" src="https://cdn.jsdelivr.net/npm/@gradio/client@0.1.4/dist/index.min.js"></script>
-
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@gradio/client@1.3.0/dist/index.min.js"></script>
     <style>
         :root { --primary: #00568b; --bg: #f4f7f9; --text: #333; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; line-height: 1.6; background: var(--bg); color: var(--text); margin: 0; padding: 0; }
-        .header { background: var(--primary); color: white; padding: 3rem 1rem; text-align: center; }
-        .container { max-width: 900px; margin: -2rem auto 2rem; padding: 0 1rem; }
-        .card { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); margin-bottom: 2rem; }
-        
-        .input-group { margin-bottom: 1.5rem; }
+        body { font-family: -apple-system, sans-serif; line-height: 1.6; background: var(--bg); color: var(--text); margin: 0; padding: 0; }
+        .header { background: var(--primary); color: white; padding: 2.5rem 1rem; text-align: center; }
+        .container { max-width: 1000px; margin: -2rem auto 2rem; padding: 0 1rem; }
+        .card { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); margin-bottom: 2rem; }
         label { display: block; font-weight: bold; margin-bottom: 0.5rem; color: var(--primary); }
-        select, textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 1rem; box-sizing: border-box; }
-        
-        button { background: var(--primary); color: white; border: none; padding: 1rem 2rem; font-size: 1.1rem; border-radius: 6px; cursor: pointer; width: 100%; font-weight: bold; transition: 0.2s; }
-        button:hover { background: #004470; transform: translateY(-1px); }
-        
-        .output-box { margin-top: 1.5rem; padding: 1.5rem; background: #f8f9fa; border-left: 5px solid var(--primary); border-radius: 4px; min-height: 80px; font-family: monospace; white-space: pre-wrap; overflow-x: auto; }
-        
-        .info-section { line-height: 1.8; }
-        .links-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem; }
-        .btn-outline { display: block; text-align: center; padding: 10px; border: 2px solid var(--primary); color: var(--primary); text-decoration: none; border-radius: 6px; font-weight: bold; }
+        select, textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 1rem; box-sizing: border-box; margin-bottom: 1.5rem; }
+        button { background: var(--primary); color: white; border: none; padding: 1rem; font-size: 1.1rem; border-radius: 6px; cursor: pointer; width: 100%; font-weight: bold; }
+        button:disabled { background: #ccc; cursor: not-allowed; }
+        .output-box { margin-top: 1rem; padding: 1rem; background: #1e1e1e; color: #d4d4d4; border-radius: 6px; min-height: 100px; font-family: 'Courier New', monospace; white-space: pre-wrap; font-size: 0.9rem; border: 1px solid #333; }
+        pre { background: #f1f1f1; padding: 1rem; border-radius: 6px; overflow-x: auto; font-size: 0.85rem; border: 1px solid #ddd; }
+        .links-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin-top: 15px; }
+        .btn-outline { text-align: center; padding: 8px; border: 1px solid var(--primary); color: var(--primary); text-decoration: none; border-radius: 4px; font-weight: 500; font-size: 0.9rem; }
         .btn-outline:hover { background: var(--primary); color: white; }
-        pre { background: #eee; padding: 1rem; border-radius: 6px; overflow-x: auto; font-size: 0.9rem; }
     </style>
 </head>
 <body>
 
 <div class="header">
     <h1>🌍 AWED-FiNER</h1>
-    <p>Fine-grained Named Entity Recognition for 36 Languages & 6.6 Billion Speakers</p>
+    <p>Fine-grained NER across 36 languages for 6.6 billion speakers</p>
 </div>
 
 <div class="container">
     <div class="card">
-        <div class="input-group">
-            <label for="lang-select">1. Select Language</label>
-            <select id="lang-select">
-                <option value="English">English</option>
-                <option value="Assamese">Assamese</option>
-                <option value="Bengali">Bengali</option>
-                <option value="Bhojpuri">Bhojpuri</option>
-                <option value="Bishnupriya">Bishnupriya</option>
-                <option value="Bodo">Bodo</option>
-                <option value="Hindi">Hindi</option>
-                <option value="Mizo">Mizo</option>
-                <option value="Spanish">Spanish</option>
-                <option value="Chinese">Chinese</option>
-                </select>
-        </div>
+        <label for="lang-select">1. Select Language</label>
+        <select id="lang-select"></select>
 
-        <div class="input-group">
-            <label for="text-input">2. Input Text</label>
-            <textarea id="text-input" rows="4">Jude Bellingham joined Real Madrid in 2023.</textarea>
-        </div>
+        <label for="text-input">2. Input Text</label>
+        <textarea id="text-input" rows="3"></textarea>
 
         <button id="analyze-btn">Analyze Text</button>
 
-        <div class="input-group">
-            <label>3. NER Results</label>
-            <div id="output-display" class="output-box">Results will appear here...</div>
-        </div>
-    </div>
-
-    <div class="card info-section">
-        <h2>About AWED-FiNER</h2>
-        <p>A unified <strong>Agentic AI Tool</strong> designed to bridge the gap between global high-resource languages and vulnerable linguistic communities (UNESCO classified) like Bodo, Manipuri, and Mizo.</p>
-        
-        <h3>Core Datasets</h3>
-        <ul>
-            <li><strong>SampurNER:</strong> 22 Indian languages. <a href="https://huggingface.co/datasets/prachuryyaIITG/SampurNER">Explore</a></li>
-            <li><strong>CLASSER:</strong> 5 low-resource languages. <a href="https://huggingface.co/datasets/prachuryyaIITG/CLASSER">Explore</a></li>
-        </ul>
-
-        <h3>Resources</h3>
-        <div class="links-grid">
-            <a href="https://huggingface.co/spaces/prachuryyaIITG/AWED-FiNER" class="btn-outline">HuggingFace Space</a>
-            <a href="https://github.com/PrachuryyaKaushik/AWED-FiNER" class="btn-outline">Agentic Tool Repo</a>
-            <a href="https://huggingface.co/prachuryyaIITG" class="btn-outline">Author Profile</a>
-        </div>
+        <label style="margin-top: 1.5rem;">3. NER Results (JSON Output)</label>
+        <div id="output-display" class="output-box">Results will appear here...</div>
     </div>
 
     <div class="card">
-        <h3>Citations</h3>
+        <h2>About the Project</h2>
+        <p>AWED-FiNER is a unified <strong>Agentic AI Tool</strong> for Fine-grained Named Entity Recognition. It routes queries to specialized expert models optimized for 36 languages.</p>
+        
+        <h3>Resources & Profiles</h3>
+        <div class="links-grid">
+            <a href="https://huggingface.co/spaces/prachuryyaIITG/AWED-FiNER" class="btn-outline">HuggingFace Space</a>
+            <a href="https://github.com/PrachuryyaKaushik/AWED-FiNER" class="btn-outline">Agentic Tool Repo</a>
+            <a href="https://www.linkedin.com/in/pkabundant/" class="btn-outline">Prachuryya (LinkedIn)</a>
+            <a href="https://huggingface.co/prachuryyaIITG" class="btn-outline">HF Profile</a>
+        </div>
+
+        <h3 style="margin-top:20px;">Citations</h3>
         <pre><code>@misc{kaushik2026awedfiner,
   title = {AWED-FiNER: Agents, Web Applications, and Expert Detectors...},
   author = {Kaushik, Prachuryya and Anand, Ashish},
@@ -97,16 +65,44 @@
 </div>
 
 <script type="module">
-    import { Client } from "https://cdn.jsdelivr.net/npm/@gradio/client@0.1.4/dist/index.min.js";
+    import { Client } from "https://cdn.jsdelivr.net/npm/@gradio/client@1.3.0/dist/index.min.js";
 
-    const examples = {
+    const MODELS = {
         "English": "Jude Bellingham joined Real Madrid in 2023.",
-        "Hindi": "भारत के पूर्वी भाग में स्थित एक राज्य पश्चिमबंग है।",
         "Chinese": "姚明出生于上海。",
+        "Hindi": "भारत के पूर्वी भाग में स्थित एक राज्य पश्चिमबंग है।",
+        "Spanish": "Madrid es la capital de España.",
         "Bodo": "अमिताभ बच्चनआ सासे मुंदांखा फावखुंगुर।",
-        "Assamese": "অমিতাভ বচ্চন এজন বিখ্যাত অভিনেতা।",
         "Mizo": "Aizawl khaw vawt tak a ni.",
-        "Spanish": "Madrid es la capital de España."
+        "Assamese": "অমিতাভ বচ্চন এজন বিখ্যাত অভিনেতা।",
+        "French": "Victor Hugo est né à Besançon.",
+        "Urdu": "مرزا غالب دہلی میں رہتے تھے۔",
+        "Portuguese": "Cristiano Ronaldo joga futebol.",
+        "Marathi": "सचिन तेंडुलकर यांचा जन्म मुंबईत झाला.",
+        "German": "Albert Einstein wurde in Ulm geboren.",
+        "Telugu": "ఎన్.టి. రామారావు నిమ్మకూరులో జన్మించారు.",
+        "Punjabi": "ਮਹਾਰਾਜਾ ਰਣਜੀਤ ਸਿੰਘ ਨੇ ਲਾਹੌਰ 'ਤੇ ਰਾਜ ਕੀਤਾ।",
+        "Tamil": "சச்சின் டெண்டுல்கர் சென்னையில் கிரிக்கெட் விளையாடினார்.",
+        "Farsi": "فردوسی در توس به دنیا آمد.",
+        "Italian": "Dante Alighieri è nato a Firenze.",
+        "Gujarati": "રવિન્દ્રનાથ ટાગોરે કલકત્તામાં ગીતાંજલિ લખી હતી.",
+        "Kannada": "ಕೆ. ಶಿವರಾಮ ಕಾರಂತರು ಪುತ್ತೂರಿನಲ್ಲಿ ಜನಿಸಿದರು.",
+        "Ukrainian": "Тарас Шевченко народився в Моринцях.",
+        "Nepali": "भानुभक्त आचार्य तनहुँमा जन्मिएका हुन्।",
+        "Bengali": "রবীন্দ্রনাথ ঠাকুর একজন বিখ্যাত লেখক।",
+        "Swedish": "Zlatan Ibrahimović föddes i Malmö.",
+        "Sanskrit": "लेखकस्य जन्म असमदेशे अभवत् ।",
+        "Bhojpuri": "भोजपुरी एगो महत्वपूर्ण भाषा ह।",
+        "Bishnupriya": "বিষ্ণুপ্রিয়া মণিপুরী ঠারর সাহিত্য।",
+        "Chhattisgarhi": "रायपुर छत्तीसगढ़ के राजधानी ए।",
+        "Dogri": "डोगरी डोगरा लोकें दी मातृभाषा ऐ।",
+        "Kashmiri": "کٲشُر زَبانہِ ہُنٛد اَدَب۔",
+        "Konkani": "कोंकणी गोंयची राजभास।",
+        "Maithili": "मैथिली मिथिलाक भाषा थिक।",
+        "Malayalam": "മലയാളം കേരളത്തിലെ ഔദ്യോഗിക ഭാഷയാണ്.",
+        "Manipuri": "মণিপুরী লোল অসি অরিবা লোল অমনি।",
+        "Odia": "ଓଡ଼ିଆ ଏକ ପ୍ରାଚୀନ ଭାଷା।",
+        "Sindhi": "سنڌي ٻولي قديمي ٻولي آهي।"
     };
 
     const langSelect = document.getElementById('lang-select');
@@ -114,30 +110,41 @@
     const analyzeBtn = document.getElementById('analyze-btn');
     const outputDisplay = document.getElementById('output-display');
 
-    // Update text on language change
-    langSelect.addEventListener('change', () => {
-        textInput.value = examples[langSelect.value] || "";
+    // Populate Dropdown
+    Object.keys(MODELS).forEach(lang => {
+        const opt = document.createElement('option');
+        opt.value = lang;
+        opt.textContent = lang;
+        langSelect.appendChild(opt);
     });
 
-    // Run Inference
+    // Handle initial state
+    textInput.value = MODELS["English"];
+
+    // Update text when language changes
+    langSelect.addEventListener('change', () => {
+        textInput.value = MODELS[langSelect.value] || "";
+    });
+
     async function runInference() {
         const text = textInput.value;
         const lang = langSelect.value;
         
-        if(!text) return;
-        
-        outputDisplay.innerText = "Connecting to Hugging Face Space... (this may take a few seconds)";
+        if(!text) return alert("Please enter text");
+
         analyzeBtn.disabled = true;
-        analyzeBtn.innerText = "Processing...";
+        analyzeBtn.innerText = "🔍 Processing... Please wait";
+        outputDisplay.innerText = "Connecting to Hugging Face ZeroGPU...";
 
         try {
-            const app = await Client.connect("prachuryyaIITG/AWED-FiNER");
-            const result = await app.predict("/predict", [text, lang]);
+            const client = await Client.connect("prachuryyaIITG/AWED-FiNER");
+            // API usage: client.predict(endpoint, array_of_inputs)
+            const result = await client.predict("/predict", [text, lang]);
             
-            // Format results
-            outputDisplay.innerHTML = JSON.stringify(result.data[0], null, 2);
+            // Result formatting
+            outputDisplay.innerText = JSON.stringify(result.data[0], null, 2);
         } catch (error) {
-            outputDisplay.innerText = "Error: " + error.message;
+            outputDisplay.innerText = "Error: " + error.message + "\n\nNote: The Space might be sleeping or loading a model. Please try again in a few seconds.";
             console.error(error);
         } finally {
             analyzeBtn.disabled = false;
