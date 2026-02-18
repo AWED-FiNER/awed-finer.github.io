@@ -82,39 +82,36 @@
     const outputDisplay = document.getElementById('output-display');
     const statusText = document.getElementById('status-text');
 
-    // Setup UI
-    Object.keys(MODELS).forEach(l => {
-        const o = document.createElement('option');
-        o.value = l; o.innerText = l;
-        langSelect.appendChild(o);
-    });
-    textInput.value = MODELS["English"];
-    langSelect.addEventListener('change', () => textInput.value = MODELS[langSelect.value]);
-
     async function runInference() {
         const text = textInput.value;
         const lang = langSelect.value;
         
         analyzeBtn.disabled = true;
-        statusText.innerText = "Connecting to Hugging Face... (Checking Space Status)";
-        outputDisplay.innerText = "Checking if Expert Models are awake...";
+        statusText.innerText = "Connected. Waiting for ZeroGPU to assign hardware...";
+        outputDisplay.innerText = "Requesting GPU allocation (this can take 10-30 seconds depending on traffic)...";
 
         try {
-            // Use Client.connect with a direct URL to bypass some DNS lag
             const client = await Client.connect("prachuryyaIITG/AWED-FiNER");
             
-            statusText.innerText = "Connected! Requesting allocation...";
-            
-            // Call the predict function
-            const result = await client.predict("/predict", [text, lang]);
-            
-            outputDisplay.innerText = JSON.stringify(result.data[0], null, 2);
-            statusText.innerText = "Success.";
+            // Using .submit() allows the browser to wait for the GPU allocation signal
+            const job = client.submit("/predict", [text, lang]);
+
+            for await (const message of job) {
+                if (message.type === "status") {
+                    const stage = message.stage;
+                    const position = message.position ? ` (Queue position: ${message.position})` : "";
+                    statusText.innerText = `ZeroGPU Status: ${stage.toUpperCase()}${position}`;
+                }
+                
+                if (message.type === "data") {
+                    outputDisplay.innerText = JSON.stringify(message.data[0], null, 2);
+                    statusText.innerText = "Analysis Successful!";
+                }
+            }
         } catch (err) {
             console.error(err);
-            statusText.innerText = "Connection Failed.";
-            outputDisplay.innerText = "Error Details: " + err.message + 
-            "\n\nTROUBLESHOOTING:\n1. Open https://huggingface.co/spaces/prachuryyaIITG/AWED-FiNER in a new tab.\n2. If it says 'Sleeping', click it to wake it up.\n3. Once the Space says 'Running', try this button again.";
+            statusText.innerText = "Inference failed.";
+            outputDisplay.innerText = "Error: " + err.message;
         } finally {
             analyzeBtn.disabled = false;
         }
