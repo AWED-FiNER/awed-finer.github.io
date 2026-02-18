@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AWED-FiNER: Fine-grained NER across 36 Languages</title>
+    <link rel="stylesheet" href="style.css">
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@gradio/client@0.1.4/dist/index.min.js"></script>
+</head>
+<body>
+    <header>
+        <h1>🌍 AWED-FiNER</h1>
+        <p>Agents, Web applications, and Expert Detectors for Fine-grained NER</p>
+    </header>
+
+    <main class="container">
+        <section class="demo-card">
+            <h2>Live Demo</h2>
+            <div class="input-group">
+                <label for="lang-select">1. Select Language</label>
+                <select id="lang-select"></select>
+            </div>
+
+            <div class="input-group">
+                <label for="text-input">2. Input Text</label>
+                <textarea id="text-input" rows="3"></textarea>
+            </div>
+
+            <button id="analyze-btn">Analyze</button>
+
+            <div id="result-container">
+                <label>3. Fine-grained NER Results</label>
+                <div id="output-display" class="output-box">
+                    Results will appear here...
+                </div>
+            </div>
+        </section>
+
+        <section class="content">
+            <h2>About the Project</h2>
+            <p>AWED-FiNER is a unified Agentic AI Tool designed to bridge the gap between global high-resource languages and vulnerable linguistic communities...</p>
+            
+            <h3>Core Datasets</h3>
+            <ul>
+                <li><strong>SampurNER:</strong> 22 Indian languages. <a href="https://huggingface.co/datasets/prachuryyaIITG/SampurNER">[Dataset]</a></li>
+                <li><strong>CLASSER:</strong> 5 low-resource Indian languages. <a href="https://huggingface.co/datasets/prachuryyaIITG/CLASSER">[Dataset]</a></li>
+            </ul>
+
+            <h3>Project Links</h3>
+            <div class="links-grid">
+                <a href="https://huggingface.co/spaces/prachuryyaIITG/AWED-FiNER" class="btn-link">HuggingFace Space</a>
+                <a href="https://github.com/PrachuryyaKaushik/AWED-FiNER" class="btn-link">Agentic Tool GitHub</a>
+            </div>
+        </section>
+
+        <section class="citations">
+            <h3>Citations</h3>
+            <pre><code>@misc{kaushik2026awedfiner,
+  title = {AWED-FiNER: Agents, Web Applications, and Expert Detectors...},
+  author = {Kaushik, Prachuryya and Anand, Ashish},
+  year = {2026}
+}</code></pre>
+        </section>
+    </main>
+
+    <footer>
+        <p>Developed by Prachuryya Kaushik | <a href="https://huggingface.co/prachuryyaIITG">Hugging Face Profile</a></p>
+    </footer>
+
+    <script src="script.js" type="module"></script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+:root {
+    --primary: #00568b;
+    --bg: #f4f7f9;
+    --text: #333;
+}
+
+body { font-family: -apple-system, sans-serif; line-height: 1.6; background: var(--bg); color: var(--text); margin: 0; }
+.container { max-width: 900px; margin: 0 auto; padding: 20px; }
+
+header { background: var(--primary); color: white; padding: 40px 20px; text-align: center; }
+
+.demo-card { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-top: -40px; }
+
+.input-group { margin-bottom: 20px; }
+label { display: block; font-weight: bold; margin-bottom: 8px; }
+select, textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 16px; }
+
+#analyze-btn { 
+    background: var(--primary); color: white; border: none; padding: 12px 24px; 
+    font-size: 18px; border-radius: 4px; cursor: pointer; transition: 0.3s;
+}
+#analyze-btn:hover { background: #00406a; }
+
+.output-box { 
+    margin-top: 20px; padding: 15px; background: #f9f9f9; 
+    border-left: 5px solid var(--primary); min-height: 100px; white-space: pre-wrap;
+}
+
+.entity-tag { padding: 2px 6px; border-radius: 4px; margin: 0 2px; font-weight: bold; background: #e0f0ff; }
