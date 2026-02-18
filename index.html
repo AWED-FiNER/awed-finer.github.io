@@ -3,93 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AWED-FiNER | Fine-grained NER across 36 Languages</title>
-    
+    <title>AWED-FiNER | 36-Language NER</title>
     <script type="module" src="https://cdn.jsdelivr.net/npm/@gradio/client@1.3.0/dist/index.min.js"></script>
-
     <style>
-        :root { --primary: #00568b; --secondary: #00a3e0; --bg: #f4f7f9; --text: #333; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; background: var(--bg); color: var(--text); margin: 0; padding: 0; }
-        
-        /* Header & Hero */
-        .header { background: linear-gradient(135deg, var(--primary) 0%, #003d63 100%); color: white; padding: 3.5rem 1rem; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        .header h1 { margin: 0; font-size: 2.5rem; letter-spacing: -1px; }
-        .header p { opacity: 0.9; font-size: 1.1rem; margin-top: 10px; max-width: 700px; margin-left: auto; margin-right: auto; }
-
-        .container { max-width: 1000px; margin: -2.5rem auto 3rem; padding: 0 1.5rem; }
-        
-        /* Interactive Card */
-        .card { background: white; padding: 2.5rem; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); margin-bottom: 2rem; border: 1px solid rgba(0,0,0,0.05); }
-        label { display: block; font-weight: bold; margin-bottom: 0.6rem; color: var(--primary); font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.5px; }
-        
-        select, textarea { width: 100%; padding: 14px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; box-sizing: border-box; margin-bottom: 1.5rem; transition: border 0.2s; background: #fff; }
-        select:focus, textarea:focus { border-color: var(--secondary); outline: none; box-shadow: 0 0 0 3px rgba(0,163,224,0.1); }
-        
-        button { background: var(--primary); color: white; border: none; padding: 1.2rem; font-size: 1.1rem; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; transition: all 0.3s ease; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        button:hover { background: #004470; transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.15); }
-        button:disabled { background: #cbd5e0; transform: none; cursor: not-allowed; }
-
-        /* Status & Results */
-        .status-bar { margin-top: 1.5rem; font-size: 0.9rem; color: #666; font-style: italic; display: flex; align-items: center; gap: 8px; }
-        .loader { width: 12px; height: 12px; border: 2px solid #ddd; border-top: 2px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; display: none; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-        .output-box { margin-top: 0.5rem; padding: 1.5rem; background: #1a202c; color: #63ff63; border-radius: 8px; min-height: 120px; font-family: 'Fira Code', 'Courier New', monospace; white-space: pre-wrap; font-size: 0.9rem; border: 1px solid #2d3748; overflow-x: auto; box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); }
-
-        /* Links & Content */
-        .info-card h2 { color: var(--primary); border-bottom: 2px solid #edf2f7; padding-bottom: 10px; }
-        .links-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin: 1.5rem 0; }
-        .link-item { display: flex; align-items: center; justify-content: center; padding: 12px; background: white; border: 1px solid #e2e8f0; border-radius: 8px; text-decoration: none; color: var(--text); font-weight: 500; transition: 0.2s; }
-        .link-item:hover { border-color: var(--primary); background: #f0f7ff; color: var(--primary); }
-        
-        pre { background: #f8fafc; padding: 1.2rem; border-radius: 8px; border: 1px solid #e2e8f0; font-size: 0.85rem; overflow-x: auto; }
+        :root { --primary: #00568b; --bg: #f4f7f9; }
+        body { font-family: sans-serif; background: var(--bg); margin: 0; padding: 20px; color: #333; }
+        .container { max-width: 800px; margin: auto; background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+        h1 { color: var(--primary); text-align: center; }
+        select, textarea, button { width: 100%; padding: 12px; margin: 10px 0; border-radius: 6px; border: 1px solid #ccc; font-size: 1rem; box-sizing: border-box; }
+        button { background: var(--primary); color: #fff; font-weight: bold; cursor: pointer; border: none; }
+        button:disabled { background: #aaa; }
+        .status { font-size: 0.85rem; color: #666; font-style: italic; margin-bottom: 10px; }
+        .output { background: #1a1a1a; color: #00ff00; padding: 15px; border-radius: 6px; min-height: 100px; font-family: monospace; white-space: pre-wrap; overflow-x: auto; border: 1px solid #333; }
     </style>
 </head>
 <body>
 
-<div class="header">
-    <h1>🌍 AWED-FiNER</h1>
-    <p>Agents, Web applications, and Expert Detectors for Fine-grained Named Entity Recognition across 36 languages for 6.6 billion speakers.</p>
-</div>
-
 <div class="container">
-    <div class="card">
-        <label for="lang-select">1. Select Language</label>
-        <select id="lang-select"></select>
+    <h1>🌍 AWED-FiNER</h1>
+    <p style="text-align: center;">Fine-grained NER for 36 Languages</p>
 
-        <label for="text-input">2. Input Text</label>
-        <textarea id="text-input" rows="4"></textarea>
+    <label>1. Select Language</label>
+    <select id="lang-select"></select>
 
-        <button id="analyze-btn">Analyze with Expert Models</button>
+    <label>2. Input Text</label>
+    <textarea id="text-input" rows="3"></textarea>
 
-        <div class="status-bar">
-            <div id="loader" class="loader"></div>
-            <span id="status-text">Ready to process.</span>
-        </div>
-        
-        <label style="margin-top: 1rem;">3. Fine-grained NER Results</label>
-        <div id="output-display" class="output-box">Waiting for input...</div>
-    </div>
+    <button id="analyze-btn">Analyze Text</button>
 
-    <div class="card info-card">
-        <h2>About the Project</h2>
-        <p>AWED-FiNER bridges the gap between high-resource global languages and vulnerable linguistic communities. It distinguishes specific sub-categories (e.g., 'Politician', 'City', 'River') across 36 languages.</p>
-        
-        <div class="links-grid">
-            <a href="https://huggingface.co/spaces/prachuryyaIITG/AWED-FiNER" class="link-item">🚀 Interactive Demo (HF)</a>
-            <a href="https://github.com/PrachuryyaKaushik/AWED-FiNER" class="link-item">🛠️ Agentic Tool Source</a>
-            <a href="https://huggingface.co/prachuryyaIITG" class="link-item">🤗 Author Profile</a>
-            <a href="https://www.linkedin.com/in/pkabundant/" class="link-item">💼 LinkedIn Profile</a>
-        </div>
-
-        <h3>Citations</h3>
-        <pre><code>@misc{kaushik2026awedfiner,
-  title = {AWED-FiNER: Agents, Web Applications, and Expert Detectors for Fine-grained Named Entity Recognition across 36 Languages for 6.6 Billion Speakers},
-  author = {Kaushik, Prachuryya and Anand, Ashish},
-  year = {2026},
-  note = {arXiv preprint, submitted}
-}</code></pre>
-    </div>
+    <div id="status-text" class="status">Ready.</div>
+    <div id="output-display" class="output">Results will appear here...</div>
 </div>
 
 <script type="module">
@@ -133,70 +76,51 @@
         "Sindhi": "سنڌي ٻولي قديمي ٻولي آهي।"
     };
 
-    document.addEventListener('DOMContentLoaded', () => {
-        const langSelect = document.getElementById('lang-select');
-        const textInput = document.getElementById('text-input');
-        const analyzeBtn = document.getElementById('analyze-btn');
-        const outputDisplay = document.getElementById('output-display');
-        const statusText = document.getElementById('status-text');
-        const loader = document.getElementById('loader');
+    const langSelect = document.getElementById('lang-select');
+    const textInput = document.getElementById('text-input');
+    const analyzeBtn = document.getElementById('analyze-btn');
+    const outputDisplay = document.getElementById('output-display');
+    const statusText = document.getElementById('status-text');
 
-        // Populate Dropdown
-        Object.keys(MODELS).forEach(lang => {
-            const opt = document.createElement('option');
-            opt.value = lang;
-            opt.textContent = lang;
-            langSelect.appendChild(opt);
-        });
-
-        // Initial setup
-        textInput.value = MODELS["English"];
-
-        langSelect.addEventListener('change', () => {
-            textInput.value = MODELS[langSelect.value] || "";
-        });
-
-        async function runInference() {
-            const text = textInput.value;
-            const lang = langSelect.value;
-            
-            if(!text) return;
-
-            // UI State: Loading
-            analyzeBtn.disabled = true;
-            analyzeBtn.innerText = "Processing...";
-            loader.style.display = "block";
-            statusText.innerText = "Connecting to Hugging Face ZeroGPU...";
-            outputDisplay.innerText = "Waking up expert models...";
-
-            try {
-                const client = await Client.connect("prachuryyaIITG/AWED-FiNER");
-                
-                // Using job-based prediction to handle ZeroGPU queueing
-                const job = client.submit("/predict", [text, lang]);
-
-                for await (const message of job) {
-                    if (message.type === "status") {
-                        statusText.innerText = `Status: ${message.stage.toUpperCase()}... ${message.position ? 'Queue pos: ' + message.position : ''}`;
-                    }
-                    if (message.type === "data") {
-                        outputDisplay.innerText = JSON.stringify(message.data[0], null, 2);
-                        statusText.innerText = "Analysis Complete!";
-                    }
-                }
-            } catch (error) {
-                console.error(error);
-                statusText.innerText = "Connection failed.";
-                outputDisplay.innerText = "Error: " + error.message + "\n\nTip: Try clicking Analyze again in 10 seconds.";
-            } finally {
-                analyzeBtn.disabled = false;
-                analyzeBtn.innerText = "Analyze with Expert Models";
-                loader.style.display = "none";
-            }
-        }
-
-        analyzeBtn.addEventListener('click', runInference);
+    // Setup UI
+    Object.keys(MODELS).forEach(l => {
+        const o = document.createElement('option');
+        o.value = l; o.innerText = l;
+        langSelect.appendChild(o);
     });
+    textInput.value = MODELS["English"];
+    langSelect.addEventListener('change', () => textInput.value = MODELS[langSelect.value]);
+
+    async function runInference() {
+        const text = textInput.value;
+        const lang = langSelect.value;
+        
+        analyzeBtn.disabled = true;
+        statusText.innerText = "Connecting to Hugging Face... (Checking Space Status)";
+        outputDisplay.innerText = "Checking if Expert Models are awake...";
+
+        try {
+            // Use Client.connect with a direct URL to bypass some DNS lag
+            const client = await Client.connect("prachuryyaIITG/AWED-FiNER");
+            
+            statusText.innerText = "Connected! Requesting allocation...";
+            
+            // Call the predict function
+            const result = await client.predict("/predict", [text, lang]);
+            
+            outputDisplay.innerText = JSON.stringify(result.data[0], null, 2);
+            statusText.innerText = "Success.";
+        } catch (err) {
+            console.error(err);
+            statusText.innerText = "Connection Failed.";
+            outputDisplay.innerText = "Error Details: " + err.message + 
+            "\n\nTROUBLESHOOTING:\n1. Open https://huggingface.co/spaces/prachuryyaIITG/AWED-FiNER in a new tab.\n2. If it says 'Sleeping', click it to wake it up.\n3. Once the Space says 'Running', try this button again.";
+        } finally {
+            analyzeBtn.disabled = false;
+        }
+    }
+
+    analyzeBtn.addEventListener('click', runInference);
 </script>
 
 </body>
