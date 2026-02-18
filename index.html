@@ -106,19 +106,15 @@
         const outputDisplay = document.getElementById('output-display');
         const statusArea = document.getElementById('status-area');
 
-        // Populate Dropdown
+        // Populate Dropdown logic (Ensure this is present)
         Object.keys(MODELS).forEach(lang => {
             const opt = document.createElement('option');
             opt.value = lang;
             opt.textContent = lang;
             langSelect.appendChild(opt);
         });
-
         textInput.value = MODELS["English"];
-
-        langSelect.addEventListener('change', () => {
-            textInput.value = MODELS[langSelect.value] || "";
-        });
+        langSelect.addEventListener('change', () => textInput.value = MODELS[langSelect.value] || "");
 
         async function runInference() {
             const text = textInput.value;
@@ -126,37 +122,33 @@
             
             analyzeBtn.disabled = true;
             analyzeBtn.innerText = "Processing...";
-            statusArea.innerText = "Connecting to API...";
-            outputDisplay.innerText = "Searching for endpoints...";
+            statusArea.innerText = "Connecting to AWED-FiNER Expert Models...";
+            outputDisplay.innerText = "Waking up GPU hardware...";
 
             try {
+                // Connect with a longer timeout
                 const app = await Client.connect("prachuryyaIITG/AWED-FiNER");
                 
-                // We try "predict" first, and if that fails, we try the function name "get_ner_results"
-                let job;
-                try {
-                    job = app.submit("/predict", [text, lang]);
-                } catch (e) {
-                    console.log("Retrying with function name...");
-                    job = app.submit("/get_ner_results", [text, lang]);
+                // We use index 0 as a fallback if the name "predict" isn't indexed properly
+                statusArea.innerText = "Connection established. Routing query...";
+                
+                const result = await app.predict(0, [text, lang]);
+                
+                // result.data contains the outputs of get_ner_results
+                if (result.data) {
+                    outputDisplay.innerText = JSON.stringify(result.data[0], null, 2);
+                    statusArea.innerText = "Analysis Complete.";
                 }
 
-                for await (const message of job) {
-                    if (message.type === "status") {
-                        const stage = message.stage;
-                        const pos = message.position ? ` (Queue: ${message.position})` : "";
-                        statusArea.innerText = `ZeroGPU Status: ${stage.toUpperCase()}${pos}`;
-                    }
-                    if (message.type === "data") {
-                        outputDisplay.innerText = JSON.stringify(message.data[0], null, 2);
-                        statusArea.innerText = "Success!";
-                    }
-                }
             } catch (error) {
-                console.error(error);
-                statusArea.innerText = "API Endpoint Error.";
-                outputDisplay.innerText = "Error: " + error.message + 
-                "\n\nPossible Fix: Ensure your app.py has 'api_name=\"predict\"' in the submit_btn.click() function.";
+                console.error("Detailed Error:", error);
+                statusArea.innerText = "Endpoint error.";
+                
+                // Specific troubleshooting for the user
+                outputDisplay.innerText = "Troubleshooting Info:\n" + 
+                "1. Is the HF Space Public? Yes.\n" +
+                "2. Is the Space 'Running'? Check https://huggingface.co/spaces/prachuryyaIITG/AWED-FiNER\n" +
+                "3. Error Message: " + error.message;
             } finally {
                 analyzeBtn.disabled = false;
                 analyzeBtn.innerText = "Analyze Text";
