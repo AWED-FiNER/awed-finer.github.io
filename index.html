@@ -4,91 +4,70 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AWED-FiNER | Fine-grained NER across 36 Languages</title>
+    
+    <script type="module" src="https://gradio.s3-us-west-2.amazonaws.com/4.12.0/gradio.js"></script>
+
     <style>
-        :root { --primary: #00568b; --bg: #f4f7f9; --text: #333; }
-        body { font-family: -apple-system, sans-serif; line-height: 1.6; background: var(--bg); color: var(--text); margin: 0; padding: 0; }
+        :root { --primary: #00568b; --bg: #f8fafc; --text: #1e293b; }
+        body { font-family: -apple-system, system-ui, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; }
         
-        .header { background: var(--primary); color: white; padding: 2rem 1rem; text-align: center; }
-        .header h1 { margin: 0; font-size: 2.2rem; }
-        .header p { opacity: 0.9; margin-top: 5px; max-width: 800px; margin-left: auto; margin-right: auto; }
+        .header { background: var(--primary); color: white; padding: 3rem 1rem; text-align: center; }
+        .header h1 { margin: 0; font-size: 2.5rem; }
+        
+        .container { max-width: 1000px; margin: -2rem auto 3rem; padding: 0 1rem; }
 
-        .container { max-width: 1100px; margin: 0 auto; padding: 20px; }
-
-        /* THE EMBEDDED SPACE */
-        .space-wrapper { 
+        /* THE CLEAN COMPONENT WRAPPER */
+        .app-container { 
             background: white; 
             border-radius: 12px; 
-            overflow: hidden; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1); 
+            padding: 10px;
             margin-bottom: 2rem;
-            border: 1px solid #ddd;
-            height: 900px; /* Adjust height based on your Gradio content */
-            width: 100%;
+            min-height: 600px;
         }
-        iframe { width: 100%; height: 100%; border: none; }
 
-        /* INFO SECTIONS */
-        .card { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 2rem; }
-        h2, h3 { color: var(--primary); }
+        .card { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-bottom: 2rem; }
+        h2 { color: var(--primary); border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; }
         
-        .links-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 1rem; }
-        .link-item { 
-            display: block; text-align: center; padding: 12px; 
-            background: #fff; border: 2px solid var(--primary); 
-            color: var(--primary); text-decoration: none; border-radius: 8px; 
-            font-weight: bold; transition: 0.2s; 
-        }
+        .links-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin: 1.5rem 0; }
+        .link-item { text-align: center; padding: 12px; border: 2px solid var(--primary); color: var(--primary); text-decoration: none; border-radius: 8px; font-weight: bold; transition: 0.2s; }
         .link-item:hover { background: var(--primary); color: white; }
 
-        pre { background: #f8f9fa; padding: 1rem; border-radius: 8px; border: 1px solid #eee; overflow-x: auto; font-size: 0.85rem; }
-        footer { text-align: center; padding: 2rem; color: #777; font-size: 0.9rem; }
+        pre { background: #f1f5f9; padding: 1.2rem; border-radius: 8px; overflow-x: auto; font-size: 0.85rem; border: 1px solid #e2e8f0; }
     </style>
 </head>
 <body>
 
 <div class="header">
     <h1>🌍 AWED-FiNER</h1>
-    <p>Agents, Web applications, and Expert Detectors for Fine-grained Named Entity Recognition across 36 languages for 6.6 billion speakers.</p>
+    <p>Fine-grained NER across 36 languages for 6.6 billion speakers</p>
 </div>
 
 <div class="container">
     
-    <div class="space-wrapper">
-        <iframe src="https://prachuryyaiitg-awed-finer.hf.space" allow="accelerometer; ambient-light-sensor; camera; display-capture; encrypted-media; geolocation; gyroscope; microphone; midi; speaker-selection; usb; vibrate; vr; xr-spatial-tracking" allowfullscreen></iframe>
+    <div class="app-container">
+        <gradio-app src="https://prachuryyaIITG-AWED-FiNER.hf.space" theme_mode="light" control_page_title="false" initial_height="600px"></gradio-app>
     </div>
 
     <div class="card">
-        <h2>About the Project</h2>
-        <p>AWED-FiNER is a unified <strong>Agentic AI Tool</strong> designed to bridge the gap between global high-resource languages and vulnerable linguistic communities. It provides high-precision, Fine-grained Named Entity Recognition (FgNER) by routing queries to 36 specialized expert models.</p>
+        <h2>Project Overview</h2>
+        <p>AWED-FiNER is a specialized Routing Agent Tool that provides high-precision detection for sub-categories like 'Politician', 'City', or 'River'. It supports 26 Indian languages and 10 global languages.</p>
         
         <div class="links-grid">
-            <a href="https://huggingface.co/spaces/prachuryyaIITG/AWED-FiNER" class="link-item">🤗 Hugging Face Space</a>
-            <a href="https://github.com/PrachuryyaKaushik/AWED-FiNER" class="link-item">🛠️ GitHub Repository</a>
-            <a href="https://huggingface.co/prachuryyaIITG" class="link-item">🧬 Model Hub</a>
-            <a href="https://www.linkedin.com/in/pkabundant/" class="link-item">💼 Author LinkedIn</a>
+            <a href="https://huggingface.co/spaces/prachuryyaIITG/AWED-FiNER" class="link-item">Hugging Face Space</a>
+            <a href="https://github.com/PrachuryyaKaushik/AWED-FiNER" class="link-item">GitHub Repository</a>
+            <a href="https://huggingface.co/prachuryyaIITG" class="link-item">Author Profile</a>
         </div>
     </div>
 
     <div class="card">
-        <h3>Core Research & Datasets</h3>
-        <ul>
-            <li><strong>SampurNER:</strong> NER for 22 Indian languages.</li>
-            <li><strong>CLASSER:</strong> Enhancement through script similarity.</li>
-            <li><strong>MultiCoNER2:</strong> Global fine-grained NER dataset.</li>
-        </ul>
-        
-        <h3>Citations</h3>
+        <h3>BibTeX Citation</h3>
         <pre><code>@misc{kaushik2026awedfiner,
   title = {AWED-FiNER: Agents, Web Applications, and Expert Detectors for Fine-grained Named Entity Recognition...},
   author = {Kaushik, Prachuryya and Anand, Ashish},
-  year = {2026},
-  note = {arXiv preprint, submitted}
+  year = {2026}
 }</code></pre>
     </div>
-
-    <footer>
-        &copy; 2026 AWED-FiNER Project | Prachuryya Kaushik & Ashish Anand
-    </footer>
 </div>
 
 </body>
