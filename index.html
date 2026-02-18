@@ -67,64 +67,12 @@
 <script type="module">
     import { Client } from "https://cdn.jsdelivr.net/npm/@gradio/client@1.3.0/dist/index.min.js";
 
-    const MODELS = {
-        "English": "Jude Bellingham joined Real Madrid in 2023.",
-        "Chinese": "姚明出生于上海。",
-        "Hindi": "भारत के पूर्वी भाग में स्थित एक राज्य पश्चिमबंग है।",
-        "Spanish": "Madrid es la capital de España.",
-        "Bodo": "अमिताभ बच्चनआ सासे मुंदांखा फावखुंगुर।",
-        "Mizo": "Aizawl khaw vawt tak a ni.",
-        "Assamese": "অমিতাভ বচ্চন এজন বিখ্যাত অভিনেতা।",
-        "French": "Victor Hugo est né à Besançon.",
-        "Urdu": "مرزا غالب دہلی میں رہتے تھے۔",
-        "Portuguese": "Cristiano Ronaldo joga futebol.",
-        "Marathi": "सचिन तेंडुलकर यांचा जन्म मुंबईत झाला.",
-        "German": "Albert Einstein wurde in Ulm geboren.",
-        "Telugu": "ఎన్.టి. రామారావు నిమ్మకూరులో జన్మించారు.",
-        "Punjabi": "ਮਹਾਰਾਜਾ ਰਣਜੀਤ ਸਿੰਘ ਨੇ ਲਾਹੌਰ 'ਤੇ ਰਾਜ ਕੀਤਾ।",
-        "Tamil": "சச்சின் டெண்டுல்கர் சென்னையில் கிரிக்கெட் விளையாடினார்.",
-        "Farsi": "فردوسی در توس به دنیا آمد.",
-        "Italian": "Dante Alighieri è nato a Firenze.",
-        "Gujarati": "રવિન્દ્રનાથ ટાગોરે કલકત્તામાં ગીતાંજલિ લખી હતી.",
-        "Kannada": "ಕೆ. ಶಿವರಾಮ ಕಾರಂತರು ಪುತ್ತೂರಿನಲ್ಲಿ ಜನಿಸಿದರು.",
-        "Ukrainian": "Тарас Шевченко народився в Моринцях.",
-        "Nepali": "भानुभक्त आचार्य तनहुँमा जन्मिएका हुन्।",
-        "Bengali": "রবীন্দ্রনাথ ঠাকুর একজন বিখ্যাত লেখক।",
-        "Swedish": "Zlatan Ibrahimović föddes i Malmö.",
-        "Sanskrit": "लेखकस्य जन्म असमदेशे अभवत् ।",
-        "Bhojpuri": "भोजपुरी एगो महत्वपूर्ण भाषा ह।",
-        "Bishnupriya": "বিষ্ণুপ্রিয়া মণিপুরী ঠারর সাহিত্য।",
-        "Chhattisgarhi": "रायपुर छत्तीसगढ़ के राजधानी ए।",
-        "Dogri": "डोगरी डोगरा लोकें दी मातृभाषा ऐ।",
-        "Kashmiri": "کٲشُر زَبانہِ ہُنٛد اَدَب۔",
-        "Konkani": "कोंकणी गोंयची राजभास।",
-        "Maithili": "मैथिली मिथिलाक भाषा थिक।",
-        "Malayalam": "മലയാളം കേരളത്തിലെ ഔദ്യോഗിക ഭാഷയാണ്.",
-        "Manipuri": "মণিপুরী লোল অসি অরিবা লোল অমনি।",
-        "Odia": "ଓଡ଼ିଆ ଏକ ପ୍ରାଚୀନ ଭାଷା।",
-        "Sindhi": "سنڌي ٻولي قديمي ٻولي آهي।"
-    };
+    // ... (Keep the MODELS object exactly as it is in your current file) ...
 
     const langSelect = document.getElementById('lang-select');
     const textInput = document.getElementById('text-input');
     const analyzeBtn = document.getElementById('analyze-btn');
     const outputDisplay = document.getElementById('output-display');
-
-    // Populate Dropdown
-    Object.keys(MODELS).forEach(lang => {
-        const opt = document.createElement('option');
-        opt.value = lang;
-        opt.textContent = lang;
-        langSelect.appendChild(opt);
-    });
-
-    // Handle initial state
-    textInput.value = MODELS["English"];
-
-    // Update text when language changes
-    langSelect.addEventListener('change', () => {
-        textInput.value = MODELS[langSelect.value] || "";
-    });
 
     async function runInference() {
         const text = textInput.value;
@@ -133,18 +81,32 @@
         if(!text) return alert("Please enter text");
 
         analyzeBtn.disabled = true;
-        analyzeBtn.innerText = "🔍 Processing... Please wait";
-        outputDisplay.innerText = "Connecting to Hugging Face ZeroGPU...";
+        analyzeBtn.innerText = "⌛ Initializing...";
+        outputDisplay.innerText = "Waking up the Expert Models...";
 
         try {
+            // 1. Connect to the space
             const client = await Client.connect("prachuryyaIITG/AWED-FiNER");
-            // API usage: client.predict(endpoint, array_of_inputs)
-            const result = await client.predict("/predict", [text, lang]);
             
-            // Result formatting
-            outputDisplay.innerText = JSON.stringify(result.data[0], null, 2);
+            // 2. Use a more robust prediction call with status tracking
+            const prediction = client.predict("/predict", {
+                text: text,
+                language: lang,
+            });
+
+            // This listener helps if the ZeroGPU is in a queue
+            for await (const message of prediction) {
+                if (message.type === "status") {
+                    outputDisplay.innerText = `Status: ${message.stage.toUpperCase()}... \nQueue Position: ${message.position || 'Processing'}`;
+                }
+                if (message.type === "data") {
+                    outputDisplay.innerText = JSON.stringify(message.data[0], null, 2);
+                }
+            }
+
         } catch (error) {
-            outputDisplay.innerText = "Error: " + error.message + "\n\nNote: The Space might be sleeping or loading a model. Please try again in a few seconds.";
+            outputDisplay.innerText = "Connection Error: " + error.message + 
+            "\n\nMay need restarting.";
             console.error(error);
         } finally {
             analyzeBtn.disabled = false;
